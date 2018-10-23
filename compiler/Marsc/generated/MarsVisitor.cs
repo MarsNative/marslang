@@ -19,6 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
+namespace MarsLang.Compiler {
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using IToken = Antlr4.Runtime.IToken;
@@ -32,17 +33,89 @@ using IToken = Antlr4.Runtime.IToken;
 [System.CLSCompliant(false)]
 public interface IMarsVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MarsParser.compilation_unit"/>.
+	/// Visit a parse tree produced by <see cref="MarsParser.compilationUnit"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitCompilation_unit([NotNull] MarsParser.Compilation_unitContext context);
+	Result VisitCompilationUnit([NotNull] MarsParser.CompilationUnitContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MarsParser.package_decl"/>.
+	/// Visit a parse tree produced by <see cref="MarsParser.packageDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitPackage_decl([NotNull] MarsParser.Package_declContext context);
+	Result VisitPackageDecl([NotNull] MarsParser.PackageDeclContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.packageName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPackageName([NotNull] MarsParser.PackageNameContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.simpleName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSimpleName([NotNull] MarsParser.SimpleNameContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.fqName"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFqName([NotNull] MarsParser.FqNameContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.functionDef"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionDef([NotNull] MarsParser.FunctionDefContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.parameterList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitParameterList([NotNull] MarsParser.ParameterListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.parameterDef"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitParameterDef([NotNull] MarsParser.ParameterDefContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.typeRef"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTypeRef([NotNull] MarsParser.TypeRefContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.listRef"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitListRef([NotNull] MarsParser.ListRefContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.genericTypeRef"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitGenericTypeRef([NotNull] MarsParser.GenericTypeRefContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.genericParameterList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitGenericParameterList([NotNull] MarsParser.GenericParameterListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.typeDef"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTypeDef([NotNull] MarsParser.TypeDefContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="MarsParser.functionBody"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionBody([NotNull] MarsParser.FunctionBodyContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="MarsParser.expression"/>.
 	/// </summary>
@@ -62,9 +135,10 @@ public interface IMarsVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitLiteral([NotNull] MarsParser.LiteralContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="MarsParser.binary_op"/>.
+	/// Visit a parse tree produced by <see cref="MarsParser.binaryOp"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitBinary_op([NotNull] MarsParser.Binary_opContext context);
+	Result VisitBinaryOp([NotNull] MarsParser.BinaryOpContext context);
 }
+} // namespace MarsLang.Compiler

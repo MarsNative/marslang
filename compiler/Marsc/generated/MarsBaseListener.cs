@@ -19,6 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
+namespace MarsLang.Compiler {
 
 using Antlr4.Runtime.Misc;
 using IErrorNode = Antlr4.Runtime.Tree.IErrorNode;
@@ -35,29 +36,173 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 [System.CLSCompliant(false)]
 public partial class MarsBaseListener : IMarsListener {
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MarsParser.compilation_unit"/>.
+	/// Enter a parse tree produced by <see cref="MarsParser.compilationUnit"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterCompilation_unit([NotNull] MarsParser.Compilation_unitContext context) { }
+	public virtual void EnterCompilationUnit([NotNull] MarsParser.CompilationUnitContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MarsParser.compilation_unit"/>.
+	/// Exit a parse tree produced by <see cref="MarsParser.compilationUnit"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitCompilation_unit([NotNull] MarsParser.Compilation_unitContext context) { }
+	public virtual void ExitCompilationUnit([NotNull] MarsParser.CompilationUnitContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MarsParser.package_decl"/>.
+	/// Enter a parse tree produced by <see cref="MarsParser.packageDecl"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterPackage_decl([NotNull] MarsParser.Package_declContext context) { }
+	public virtual void EnterPackageDecl([NotNull] MarsParser.PackageDeclContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MarsParser.package_decl"/>.
+	/// Exit a parse tree produced by <see cref="MarsParser.packageDecl"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitPackage_decl([NotNull] MarsParser.Package_declContext context) { }
+	public virtual void ExitPackageDecl([NotNull] MarsParser.PackageDeclContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.packageName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPackageName([NotNull] MarsParser.PackageNameContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.packageName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPackageName([NotNull] MarsParser.PackageNameContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.simpleName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterSimpleName([NotNull] MarsParser.SimpleNameContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.simpleName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitSimpleName([NotNull] MarsParser.SimpleNameContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.fqName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFqName([NotNull] MarsParser.FqNameContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.fqName"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFqName([NotNull] MarsParser.FqNameContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.functionDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFunctionDef([NotNull] MarsParser.FunctionDefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.functionDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFunctionDef([NotNull] MarsParser.FunctionDefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.parameterList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterParameterList([NotNull] MarsParser.ParameterListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.parameterList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitParameterList([NotNull] MarsParser.ParameterListContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.parameterDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterParameterDef([NotNull] MarsParser.ParameterDefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.parameterDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitParameterDef([NotNull] MarsParser.ParameterDefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.typeRef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTypeRef([NotNull] MarsParser.TypeRefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.typeRef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTypeRef([NotNull] MarsParser.TypeRefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.listRef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterListRef([NotNull] MarsParser.ListRefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.listRef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitListRef([NotNull] MarsParser.ListRefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.genericTypeRef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterGenericTypeRef([NotNull] MarsParser.GenericTypeRefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.genericTypeRef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitGenericTypeRef([NotNull] MarsParser.GenericTypeRefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.genericParameterList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterGenericParameterList([NotNull] MarsParser.GenericParameterListContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.genericParameterList"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitGenericParameterList([NotNull] MarsParser.GenericParameterListContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.typeDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterTypeDef([NotNull] MarsParser.TypeDefContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.typeDef"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitTypeDef([NotNull] MarsParser.TypeDefContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="MarsParser.functionBody"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterFunctionBody([NotNull] MarsParser.FunctionBodyContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="MarsParser.functionBody"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitFunctionBody([NotNull] MarsParser.FunctionBodyContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="MarsParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -95,17 +240,17 @@ public partial class MarsBaseListener : IMarsListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLiteral([NotNull] MarsParser.LiteralContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="MarsParser.binary_op"/>.
+	/// Enter a parse tree produced by <see cref="MarsParser.binaryOp"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterBinary_op([NotNull] MarsParser.Binary_opContext context) { }
+	public virtual void EnterBinaryOp([NotNull] MarsParser.BinaryOpContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="MarsParser.binary_op"/>.
+	/// Exit a parse tree produced by <see cref="MarsParser.binaryOp"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitBinary_op([NotNull] MarsParser.Binary_opContext context) { }
+	public virtual void ExitBinaryOp([NotNull] MarsParser.BinaryOpContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>
@@ -120,3 +265,4 @@ public partial class MarsBaseListener : IMarsListener {
 	/// <remarks>The default implementation does nothing.</remarks>
 	public virtual void VisitErrorNode([NotNull] IErrorNode node) { }
 }
+} // namespace MarsLang.Compiler

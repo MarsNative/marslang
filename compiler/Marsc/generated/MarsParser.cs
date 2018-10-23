@@ -19,6 +19,7 @@
 // Ambiguous reference in cref attribute
 #pragma warning disable 419
 
+namespace MarsLang.Compiler {
 using System;
 using System.IO;
 using System.Text;
@@ -36,23 +37,34 @@ public partial class MarsParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		WS=1, BLOCK_COMMENT=2, LINE_COMMENT=3, KW_PACKAGE=4, IDENTIFIER=5, INTEGER=6, 
-		ADD=7, SUB=8, MULT=9, DIV=10, OPERATOR=11;
+		WS=1, BLOCK_COMMENT=2, LINE_COMMENT=3, KW_PACKAGE=4, KW_FUNC=5, KW_TYPE=6, 
+		SYM_LPAREN=7, SYM_RPAREN=8, SYM_LBRACE=9, SYM_RBRACE=10, SYM_LBRACKET=11, 
+		SYM_RBRACKET=12, SYM_LANGLE=13, SYM_RANGLE=14, SYM_COMMA=15, SYM_SEMICOLON=16, 
+		SYM_DOT=17, IDENTIFIER=18, INTEGER=19, ADD=20, SUB=21, MUL=22, DIV=23, 
+		OPERATOR=24;
 	public const int
-		RULE_compilation_unit = 0, RULE_package_decl = 1, RULE_expression = 2, 
-		RULE_reference = 3, RULE_literal = 4, RULE_binary_op = 5;
+		RULE_compilationUnit = 0, RULE_packageDecl = 1, RULE_packageName = 2, 
+		RULE_simpleName = 3, RULE_fqName = 4, RULE_functionDef = 5, RULE_parameterList = 6, 
+		RULE_parameterDef = 7, RULE_typeRef = 8, RULE_listRef = 9, RULE_genericTypeRef = 10, 
+		RULE_genericParameterList = 11, RULE_typeDef = 12, RULE_functionBody = 13, 
+		RULE_expression = 14, RULE_reference = 15, RULE_literal = 16, RULE_binaryOp = 17;
 	public static readonly string[] ruleNames = {
-		"compilation_unit", "package_decl", "expression", "reference", "literal", 
-		"binary_op"
+		"compilationUnit", "packageDecl", "packageName", "simpleName", "fqName", 
+		"functionDef", "parameterList", "parameterDef", "typeRef", "listRef", 
+		"genericTypeRef", "genericParameterList", "typeDef", "functionBody", "expression", 
+		"reference", "literal", "binaryOp"
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, null, null, null, "'package'", null, null, "'+'", "'-'", "'*'", 
-		"'/'"
+		null, null, null, null, "'package'", "'func'", "'type'", "'('", "')'", 
+		"'{'", "'}'", "'['", "']'", "'<'", "'>'", "','", "';'", "'.'", null, null, 
+		"'+'", "'-'", "'*'", "'/'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "WS", "BLOCK_COMMENT", "LINE_COMMENT", "KW_PACKAGE", "IDENTIFIER", 
-		"INTEGER", "ADD", "SUB", "MULT", "DIV", "OPERATOR"
+		null, "WS", "BLOCK_COMMENT", "LINE_COMMENT", "KW_PACKAGE", "KW_FUNC", 
+		"KW_TYPE", "SYM_LPAREN", "SYM_RPAREN", "SYM_LBRACE", "SYM_RBRACE", "SYM_LBRACKET", 
+		"SYM_RBRACKET", "SYM_LANGLE", "SYM_RANGLE", "SYM_COMMA", "SYM_SEMICOLON", 
+		"SYM_DOT", "IDENTIFIER", "INTEGER", "ADD", "SUB", "MUL", "DIV", "OPERATOR"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -85,38 +97,87 @@ public partial class MarsParser : Parser {
 	{
 		Interpreter = new ParserATNSimulator(this, _ATN, decisionToDFA, sharedContextCache);
 	}
-	public partial class Compilation_unitContext : ParserRuleContext {
-		public Package_declContext package_decl() {
-			return GetRuleContext<Package_declContext>(0);
+	public partial class CompilationUnitContext : ParserRuleContext {
+		public ITerminalNode Eof() { return GetToken(MarsParser.Eof, 0); }
+		public PackageDeclContext packageDecl() {
+			return GetRuleContext<PackageDeclContext>(0);
 		}
-		public Compilation_unitContext(ParserRuleContext parent, int invokingState)
+		public FunctionDefContext[] functionDef() {
+			return GetRuleContexts<FunctionDefContext>();
+		}
+		public FunctionDefContext functionDef(int i) {
+			return GetRuleContext<FunctionDefContext>(i);
+		}
+		public TypeDefContext[] typeDef() {
+			return GetRuleContexts<TypeDefContext>();
+		}
+		public TypeDefContext typeDef(int i) {
+			return GetRuleContext<TypeDefContext>(i);
+		}
+		public CompilationUnitContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_compilation_unit; } }
+		public override int RuleIndex { get { return RULE_compilationUnit; } }
 		public override void EnterRule(IParseTreeListener listener) {
 			IMarsListener typedListener = listener as IMarsListener;
-			if (typedListener != null) typedListener.EnterCompilation_unit(this);
+			if (typedListener != null) typedListener.EnterCompilationUnit(this);
 		}
 		public override void ExitRule(IParseTreeListener listener) {
 			IMarsListener typedListener = listener as IMarsListener;
-			if (typedListener != null) typedListener.ExitCompilation_unit(this);
+			if (typedListener != null) typedListener.ExitCompilationUnit(this);
 		}
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitCompilation_unit(this);
+			if (typedVisitor != null) return typedVisitor.VisitCompilationUnit(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Compilation_unitContext compilation_unit() {
-		Compilation_unitContext _localctx = new Compilation_unitContext(Context, State);
-		EnterRule(_localctx, 0, RULE_compilation_unit);
+	public CompilationUnitContext compilationUnit() {
+		CompilationUnitContext _localctx = new CompilationUnitContext(Context, State);
+		EnterRule(_localctx, 0, RULE_compilationUnit);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 12; package_decl();
+			State = 37;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==KW_PACKAGE) {
+				{
+				State = 36; packageDecl();
+				}
+			}
+
+			State = 43;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==KW_FUNC || _la==KW_TYPE) {
+				{
+				State = 41;
+				ErrorHandler.Sync(this);
+				switch (TokenStream.LA(1)) {
+				case KW_FUNC:
+					{
+					State = 39; functionDef();
+					}
+					break;
+				case KW_TYPE:
+					{
+					State = 40; typeDef();
+					}
+					break;
+				default:
+					throw new NoViableAltException(this);
+				}
+				}
+				State = 45;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
+			State = 46; Match(Eof);
 			}
 		}
 		catch (RecognitionException re) {
@@ -130,38 +191,830 @@ public partial class MarsParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Package_declContext : ParserRuleContext {
+	public partial class PackageDeclContext : ParserRuleContext {
 		public ITerminalNode KW_PACKAGE() { return GetToken(MarsParser.KW_PACKAGE, 0); }
-		public ITerminalNode IDENTIFIER() { return GetToken(MarsParser.IDENTIFIER, 0); }
-		public Package_declContext(ParserRuleContext parent, int invokingState)
+		public PackageNameContext packageName() {
+			return GetRuleContext<PackageNameContext>(0);
+		}
+		public ITerminalNode SYM_SEMICOLON() { return GetToken(MarsParser.SYM_SEMICOLON, 0); }
+		public PackageDeclContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_package_decl; } }
+		public override int RuleIndex { get { return RULE_packageDecl; } }
 		public override void EnterRule(IParseTreeListener listener) {
 			IMarsListener typedListener = listener as IMarsListener;
-			if (typedListener != null) typedListener.EnterPackage_decl(this);
+			if (typedListener != null) typedListener.EnterPackageDecl(this);
 		}
 		public override void ExitRule(IParseTreeListener listener) {
 			IMarsListener typedListener = listener as IMarsListener;
-			if (typedListener != null) typedListener.ExitPackage_decl(this);
+			if (typedListener != null) typedListener.ExitPackageDecl(this);
 		}
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitPackage_decl(this);
+			if (typedVisitor != null) return typedVisitor.VisitPackageDecl(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Package_declContext package_decl() {
-		Package_declContext _localctx = new Package_declContext(Context, State);
-		EnterRule(_localctx, 2, RULE_package_decl);
+	public PackageDeclContext packageDecl() {
+		PackageDeclContext _localctx = new PackageDeclContext(Context, State);
+		EnterRule(_localctx, 2, RULE_packageDecl);
+		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 14; Match(KW_PACKAGE);
-			State = 15; Match(IDENTIFIER);
+			State = 48; Match(KW_PACKAGE);
+			State = 49; packageName(0);
+			State = 51;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==SYM_SEMICOLON) {
+				{
+				State = 50; Match(SYM_SEMICOLON);
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class PackageNameContext : ParserRuleContext {
+		public ITerminalNode IDENTIFIER() { return GetToken(MarsParser.IDENTIFIER, 0); }
+		public PackageNameContext packageName() {
+			return GetRuleContext<PackageNameContext>(0);
+		}
+		public ITerminalNode SYM_DOT() { return GetToken(MarsParser.SYM_DOT, 0); }
+		public PackageNameContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_packageName; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterPackageName(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitPackageName(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitPackageName(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public PackageNameContext packageName() {
+		return packageName(0);
+	}
+
+	private PackageNameContext packageName(int _p) {
+		ParserRuleContext _parentctx = Context;
+		int _parentState = State;
+		PackageNameContext _localctx = new PackageNameContext(Context, _parentState);
+		PackageNameContext _prevctx = _localctx;
+		int _startState = 4;
+		EnterRecursionRule(_localctx, 4, RULE_packageName, _p);
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			{
+			State = 54; Match(IDENTIFIER);
+			}
+			Context.Stop = TokenStream.LT(-1);
+			State = 61;
+			ErrorHandler.Sync(this);
+			_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
+			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( ParseListeners!=null )
+						TriggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					{
+					_localctx = new PackageNameContext(_parentctx, _parentState);
+					PushNewRecursionContext(_localctx, _startState, RULE_packageName);
+					State = 56;
+					if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
+					State = 57; Match(SYM_DOT);
+					State = 58; Match(IDENTIFIER);
+					}
+					} 
+				}
+				State = 63;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			UnrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public partial class SimpleNameContext : ParserRuleContext {
+		public ITerminalNode IDENTIFIER() { return GetToken(MarsParser.IDENTIFIER, 0); }
+		public SimpleNameContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_simpleName; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterSimpleName(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitSimpleName(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitSimpleName(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public SimpleNameContext simpleName() {
+		SimpleNameContext _localctx = new SimpleNameContext(Context, State);
+		EnterRule(_localctx, 6, RULE_simpleName);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 64; Match(IDENTIFIER);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FqNameContext : ParserRuleContext {
+		public ITerminalNode IDENTIFIER() { return GetToken(MarsParser.IDENTIFIER, 0); }
+		public FqNameContext fqName() {
+			return GetRuleContext<FqNameContext>(0);
+		}
+		public ITerminalNode SYM_DOT() { return GetToken(MarsParser.SYM_DOT, 0); }
+		public FqNameContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_fqName; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterFqName(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitFqName(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFqName(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FqNameContext fqName() {
+		return fqName(0);
+	}
+
+	private FqNameContext fqName(int _p) {
+		ParserRuleContext _parentctx = Context;
+		int _parentState = State;
+		FqNameContext _localctx = new FqNameContext(Context, _parentState);
+		FqNameContext _prevctx = _localctx;
+		int _startState = 8;
+		EnterRecursionRule(_localctx, 8, RULE_fqName, _p);
+		try {
+			int _alt;
+			EnterOuterAlt(_localctx, 1);
+			{
+			{
+			State = 67; Match(IDENTIFIER);
+			}
+			Context.Stop = TokenStream.LT(-1);
+			State = 74;
+			ErrorHandler.Sync(this);
+			_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
+			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( ParseListeners!=null )
+						TriggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					{
+					_localctx = new FqNameContext(_parentctx, _parentState);
+					PushNewRecursionContext(_localctx, _startState, RULE_fqName);
+					State = 69;
+					if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
+					State = 70; Match(SYM_DOT);
+					State = 71; Match(IDENTIFIER);
+					}
+					} 
+				}
+				State = 76;
+				ErrorHandler.Sync(this);
+				_alt = Interpreter.AdaptivePredict(TokenStream,5,Context);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			UnrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public partial class FunctionDefContext : ParserRuleContext {
+		public ITerminalNode KW_FUNC() { return GetToken(MarsParser.KW_FUNC, 0); }
+		public SimpleNameContext simpleName() {
+			return GetRuleContext<SimpleNameContext>(0);
+		}
+		public ITerminalNode SYM_LPAREN() { return GetToken(MarsParser.SYM_LPAREN, 0); }
+		public ITerminalNode SYM_RPAREN() { return GetToken(MarsParser.SYM_RPAREN, 0); }
+		public ITerminalNode SYM_LBRACE() { return GetToken(MarsParser.SYM_LBRACE, 0); }
+		public FunctionBodyContext functionBody() {
+			return GetRuleContext<FunctionBodyContext>(0);
+		}
+		public ITerminalNode SYM_RBRACE() { return GetToken(MarsParser.SYM_RBRACE, 0); }
+		public TypeRefContext typeRef() {
+			return GetRuleContext<TypeRefContext>(0);
+		}
+		public ParameterListContext parameterList() {
+			return GetRuleContext<ParameterListContext>(0);
+		}
+		public FunctionDefContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_functionDef; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterFunctionDef(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitFunctionDef(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFunctionDef(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FunctionDefContext functionDef() {
+		FunctionDefContext _localctx = new FunctionDefContext(Context, State);
+		EnterRule(_localctx, 10, RULE_functionDef);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 77; Match(KW_FUNC);
+			State = 78; simpleName();
+			State = 79; Match(SYM_LPAREN);
+			{
+			State = 81;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==IDENTIFIER) {
+				{
+				State = 80; parameterList();
+				}
+			}
+
+			}
+			State = 83; Match(SYM_RPAREN);
+			State = 85;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==SYM_LBRACKET || _la==IDENTIFIER) {
+				{
+				State = 84; typeRef();
+				}
+			}
+
+			State = 87; Match(SYM_LBRACE);
+			State = 88; functionBody();
+			State = 89; Match(SYM_RBRACE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ParameterListContext : ParserRuleContext {
+		public ParameterDefContext[] parameterDef() {
+			return GetRuleContexts<ParameterDefContext>();
+		}
+		public ParameterDefContext parameterDef(int i) {
+			return GetRuleContext<ParameterDefContext>(i);
+		}
+		public ITerminalNode[] SYM_COMMA() { return GetTokens(MarsParser.SYM_COMMA); }
+		public ITerminalNode SYM_COMMA(int i) {
+			return GetToken(MarsParser.SYM_COMMA, i);
+		}
+		public ParameterListContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_parameterList; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterParameterList(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitParameterList(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParameterList(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ParameterListContext parameterList() {
+		ParameterListContext _localctx = new ParameterListContext(Context, State);
+		EnterRule(_localctx, 12, RULE_parameterList);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 91; parameterDef();
+			State = 96;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==SYM_COMMA) {
+				{
+				{
+				State = 92; Match(SYM_COMMA);
+				State = 93; parameterDef();
+				}
+				}
+				State = 98;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ParameterDefContext : ParserRuleContext {
+		public ITerminalNode IDENTIFIER() { return GetToken(MarsParser.IDENTIFIER, 0); }
+		public TypeRefContext typeRef() {
+			return GetRuleContext<TypeRefContext>(0);
+		}
+		public ParameterDefContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_parameterDef; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterParameterDef(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitParameterDef(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitParameterDef(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ParameterDefContext parameterDef() {
+		ParameterDefContext _localctx = new ParameterDefContext(Context, State);
+		EnterRule(_localctx, 14, RULE_parameterDef);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 99; Match(IDENTIFIER);
+			State = 100; typeRef();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class TypeRefContext : ParserRuleContext {
+		public ListRefContext listRef() {
+			return GetRuleContext<ListRefContext>(0);
+		}
+		public GenericTypeRefContext genericTypeRef() {
+			return GetRuleContext<GenericTypeRefContext>(0);
+		}
+		public FqNameContext fqName() {
+			return GetRuleContext<FqNameContext>(0);
+		}
+		public TypeRefContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_typeRef; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterTypeRef(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitTypeRef(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTypeRef(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public TypeRefContext typeRef() {
+		TypeRefContext _localctx = new TypeRefContext(Context, State);
+		EnterRule(_localctx, 16, RULE_typeRef);
+		try {
+			State = 105;
+			ErrorHandler.Sync(this);
+			switch ( Interpreter.AdaptivePredict(TokenStream,9,Context) ) {
+			case 1:
+				EnterOuterAlt(_localctx, 1);
+				{
+				State = 102; listRef();
+				}
+				break;
+			case 2:
+				EnterOuterAlt(_localctx, 2);
+				{
+				State = 103; genericTypeRef();
+				}
+				break;
+			case 3:
+				EnterOuterAlt(_localctx, 3);
+				{
+				State = 104; fqName(0);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ListRefContext : ParserRuleContext {
+		public ITerminalNode SYM_LBRACKET() { return GetToken(MarsParser.SYM_LBRACKET, 0); }
+		public FqNameContext fqName() {
+			return GetRuleContext<FqNameContext>(0);
+		}
+		public ITerminalNode SYM_RBRACKET() { return GetToken(MarsParser.SYM_RBRACKET, 0); }
+		public ListRefContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_listRef; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterListRef(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitListRef(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitListRef(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ListRefContext listRef() {
+		ListRefContext _localctx = new ListRefContext(Context, State);
+		EnterRule(_localctx, 18, RULE_listRef);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 107; Match(SYM_LBRACKET);
+			State = 108; fqName(0);
+			State = 109; Match(SYM_RBRACKET);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class GenericTypeRefContext : ParserRuleContext {
+		public FqNameContext fqName() {
+			return GetRuleContext<FqNameContext>(0);
+		}
+		public ITerminalNode SYM_LANGLE() { return GetToken(MarsParser.SYM_LANGLE, 0); }
+		public GenericParameterListContext genericParameterList() {
+			return GetRuleContext<GenericParameterListContext>(0);
+		}
+		public ITerminalNode SYM_RANGLE() { return GetToken(MarsParser.SYM_RANGLE, 0); }
+		public GenericTypeRefContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_genericTypeRef; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterGenericTypeRef(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitGenericTypeRef(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGenericTypeRef(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public GenericTypeRefContext genericTypeRef() {
+		GenericTypeRefContext _localctx = new GenericTypeRefContext(Context, State);
+		EnterRule(_localctx, 20, RULE_genericTypeRef);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 111; fqName(0);
+			State = 112; Match(SYM_LANGLE);
+			State = 113; genericParameterList();
+			State = 114; Match(SYM_RANGLE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class GenericParameterListContext : ParserRuleContext {
+		public TypeRefContext[] typeRef() {
+			return GetRuleContexts<TypeRefContext>();
+		}
+		public TypeRefContext typeRef(int i) {
+			return GetRuleContext<TypeRefContext>(i);
+		}
+		public ITerminalNode[] SYM_COMMA() { return GetTokens(MarsParser.SYM_COMMA); }
+		public ITerminalNode SYM_COMMA(int i) {
+			return GetToken(MarsParser.SYM_COMMA, i);
+		}
+		public GenericParameterListContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_genericParameterList; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterGenericParameterList(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitGenericParameterList(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitGenericParameterList(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public GenericParameterListContext genericParameterList() {
+		GenericParameterListContext _localctx = new GenericParameterListContext(Context, State);
+		EnterRule(_localctx, 22, RULE_genericParameterList);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 116; typeRef();
+			State = 121;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==SYM_COMMA) {
+				{
+				{
+				State = 117; Match(SYM_COMMA);
+				State = 118; typeRef();
+				}
+				}
+				State = 123;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class TypeDefContext : ParserRuleContext {
+		public ITerminalNode KW_TYPE() { return GetToken(MarsParser.KW_TYPE, 0); }
+		public SimpleNameContext simpleName() {
+			return GetRuleContext<SimpleNameContext>(0);
+		}
+		public ITerminalNode SYM_LBRACE() { return GetToken(MarsParser.SYM_LBRACE, 0); }
+		public ITerminalNode SYM_RBRACE() { return GetToken(MarsParser.SYM_RBRACE, 0); }
+		public TypeDefContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_typeDef; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterTypeDef(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitTypeDef(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitTypeDef(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public TypeDefContext typeDef() {
+		TypeDefContext _localctx = new TypeDefContext(Context, State);
+		EnterRule(_localctx, 24, RULE_typeDef);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 124; Match(KW_TYPE);
+			State = 125; simpleName();
+			State = 128;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==SYM_LBRACE) {
+				{
+				State = 126; Match(SYM_LBRACE);
+				State = 127; Match(SYM_RBRACE);
+				}
+			}
+
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class FunctionBodyContext : ParserRuleContext {
+		public ExpressionContext[] expression() {
+			return GetRuleContexts<ExpressionContext>();
+		}
+		public ExpressionContext expression(int i) {
+			return GetRuleContext<ExpressionContext>(i);
+		}
+		public ITerminalNode[] SYM_SEMICOLON() { return GetTokens(MarsParser.SYM_SEMICOLON); }
+		public ITerminalNode SYM_SEMICOLON(int i) {
+			return GetToken(MarsParser.SYM_SEMICOLON, i);
+		}
+		public FunctionBodyContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_functionBody; } }
+		public override void EnterRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.EnterFunctionBody(this);
+		}
+		public override void ExitRule(IParseTreeListener listener) {
+			IMarsListener typedListener = listener as IMarsListener;
+			if (typedListener != null) typedListener.ExitFunctionBody(this);
+		}
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitFunctionBody(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public FunctionBodyContext functionBody() {
+		FunctionBodyContext _localctx = new FunctionBodyContext(Context, State);
+		EnterRule(_localctx, 26, RULE_functionBody);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 136;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			while (_la==IDENTIFIER || _la==INTEGER) {
+				{
+				{
+				State = 130; expression();
+				State = 132;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+				if (_la==SYM_SEMICOLON) {
+					{
+					State = 131; Match(SYM_SEMICOLON);
+					}
+				}
+
+				}
+				}
+				State = 138;
+				ErrorHandler.Sync(this);
+				_la = TokenStream.LA(1);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -205,21 +1058,21 @@ public partial class MarsParser : Parser {
 	[RuleVersion(0)]
 	public ExpressionContext expression() {
 		ExpressionContext _localctx = new ExpressionContext(Context, State);
-		EnterRule(_localctx, 4, RULE_expression);
+		EnterRule(_localctx, 28, RULE_expression);
 		try {
-			State = 19;
+			State = 141;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case IDENTIFIER:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 17; reference();
+				State = 139; reference();
 				}
 				break;
 			case INTEGER:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 18; literal();
+				State = 140; literal();
 				}
 				break;
 			default:
@@ -262,11 +1115,11 @@ public partial class MarsParser : Parser {
 	[RuleVersion(0)]
 	public ReferenceContext reference() {
 		ReferenceContext _localctx = new ReferenceContext(Context, State);
-		EnterRule(_localctx, 6, RULE_reference);
+		EnterRule(_localctx, 30, RULE_reference);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 21; Match(IDENTIFIER);
+			State = 143; Match(IDENTIFIER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -305,11 +1158,11 @@ public partial class MarsParser : Parser {
 	[RuleVersion(0)]
 	public LiteralContext literal() {
 		LiteralContext _localctx = new LiteralContext(Context, State);
-		EnterRule(_localctx, 8, RULE_literal);
+		EnterRule(_localctx, 32, RULE_literal);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 23; Match(INTEGER);
+			State = 145; Match(INTEGER);
 			}
 		}
 		catch (RecognitionException re) {
@@ -323,7 +1176,7 @@ public partial class MarsParser : Parser {
 		return _localctx;
 	}
 
-	public partial class Binary_opContext : ParserRuleContext {
+	public partial class BinaryOpContext : ParserRuleContext {
 		public ExpressionContext[] expression() {
 			return GetRuleContexts<ExpressionContext>();
 		}
@@ -331,36 +1184,36 @@ public partial class MarsParser : Parser {
 			return GetRuleContext<ExpressionContext>(i);
 		}
 		public ITerminalNode OPERATOR() { return GetToken(MarsParser.OPERATOR, 0); }
-		public Binary_opContext(ParserRuleContext parent, int invokingState)
+		public BinaryOpContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_binary_op; } }
+		public override int RuleIndex { get { return RULE_binaryOp; } }
 		public override void EnterRule(IParseTreeListener listener) {
 			IMarsListener typedListener = listener as IMarsListener;
-			if (typedListener != null) typedListener.EnterBinary_op(this);
+			if (typedListener != null) typedListener.EnterBinaryOp(this);
 		}
 		public override void ExitRule(IParseTreeListener listener) {
 			IMarsListener typedListener = listener as IMarsListener;
-			if (typedListener != null) typedListener.ExitBinary_op(this);
+			if (typedListener != null) typedListener.ExitBinaryOp(this);
 		}
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IMarsVisitor<TResult> typedVisitor = visitor as IMarsVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitBinary_op(this);
+			if (typedVisitor != null) return typedVisitor.VisitBinaryOp(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public Binary_opContext binary_op() {
-		Binary_opContext _localctx = new Binary_opContext(Context, State);
-		EnterRule(_localctx, 10, RULE_binary_op);
+	public BinaryOpContext binaryOp() {
+		BinaryOpContext _localctx = new BinaryOpContext(Context, State);
+		EnterRule(_localctx, 34, RULE_binaryOp);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 25; expression();
-			State = 26; Match(OPERATOR);
-			State = 27; expression();
+			State = 147; expression();
+			State = 148; Match(OPERATOR);
+			State = 149; expression();
 			}
 		}
 		catch (RecognitionException re) {
@@ -374,30 +1227,145 @@ public partial class MarsParser : Parser {
 		return _localctx;
 	}
 
+	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
+		switch (ruleIndex) {
+		case 2: return packageName_sempred((PackageNameContext)_localctx, predIndex);
+		case 4: return fqName_sempred((FqNameContext)_localctx, predIndex);
+		}
+		return true;
+	}
+	private bool packageName_sempred(PackageNameContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0: return Precpred(Context, 1);
+		}
+		return true;
+	}
+	private bool fqName_sempred(FqNameContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 1: return Precpred(Context, 1);
+		}
+		return true;
+	}
+
 	private static char[] _serializedATN = {
 		'\x3', '\x608B', '\xA72A', '\x8133', '\xB9ED', '\x417C', '\x3BE7', '\x7786', 
-		'\x5964', '\x3', '\r', ' ', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', '\t', 
-		'\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', '\x6', 
-		'\t', '\x6', '\x4', '\a', '\t', '\a', '\x3', '\x2', '\x3', '\x2', '\x3', 
-		'\x3', '\x3', '\x3', '\x3', '\x3', '\x3', '\x4', '\x3', '\x4', '\x5', 
-		'\x4', '\x16', '\n', '\x4', '\x3', '\x5', '\x3', '\x5', '\x3', '\x6', 
-		'\x3', '\x6', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', 
-		'\a', '\x2', '\x2', '\b', '\x2', '\x4', '\x6', '\b', '\n', '\f', '\x2', 
-		'\x2', '\x2', '\x1A', '\x2', '\xE', '\x3', '\x2', '\x2', '\x2', '\x4', 
-		'\x10', '\x3', '\x2', '\x2', '\x2', '\x6', '\x15', '\x3', '\x2', '\x2', 
-		'\x2', '\b', '\x17', '\x3', '\x2', '\x2', '\x2', '\n', '\x19', '\x3', 
-		'\x2', '\x2', '\x2', '\f', '\x1B', '\x3', '\x2', '\x2', '\x2', '\xE', 
-		'\xF', '\x5', '\x4', '\x3', '\x2', '\xF', '\x3', '\x3', '\x2', '\x2', 
-		'\x2', '\x10', '\x11', '\a', '\x6', '\x2', '\x2', '\x11', '\x12', '\a', 
-		'\a', '\x2', '\x2', '\x12', '\x5', '\x3', '\x2', '\x2', '\x2', '\x13', 
-		'\x16', '\x5', '\b', '\x5', '\x2', '\x14', '\x16', '\x5', '\n', '\x6', 
-		'\x2', '\x15', '\x13', '\x3', '\x2', '\x2', '\x2', '\x15', '\x14', '\x3', 
-		'\x2', '\x2', '\x2', '\x16', '\a', '\x3', '\x2', '\x2', '\x2', '\x17', 
-		'\x18', '\a', '\a', '\x2', '\x2', '\x18', '\t', '\x3', '\x2', '\x2', '\x2', 
-		'\x19', '\x1A', '\a', '\b', '\x2', '\x2', '\x1A', '\v', '\x3', '\x2', 
-		'\x2', '\x2', '\x1B', '\x1C', '\x5', '\x6', '\x4', '\x2', '\x1C', '\x1D', 
-		'\a', '\r', '\x2', '\x2', '\x1D', '\x1E', '\x5', '\x6', '\x4', '\x2', 
-		'\x1E', '\r', '\x3', '\x2', '\x2', '\x2', '\x3', '\x15',
+		'\x5964', '\x3', '\x1A', '\x9A', '\x4', '\x2', '\t', '\x2', '\x4', '\x3', 
+		'\t', '\x3', '\x4', '\x4', '\t', '\x4', '\x4', '\x5', '\t', '\x5', '\x4', 
+		'\x6', '\t', '\x6', '\x4', '\a', '\t', '\a', '\x4', '\b', '\t', '\b', 
+		'\x4', '\t', '\t', '\t', '\x4', '\n', '\t', '\n', '\x4', '\v', '\t', '\v', 
+		'\x4', '\f', '\t', '\f', '\x4', '\r', '\t', '\r', '\x4', '\xE', '\t', 
+		'\xE', '\x4', '\xF', '\t', '\xF', '\x4', '\x10', '\t', '\x10', '\x4', 
+		'\x11', '\t', '\x11', '\x4', '\x12', '\t', '\x12', '\x4', '\x13', '\t', 
+		'\x13', '\x3', '\x2', '\x5', '\x2', '(', '\n', '\x2', '\x3', '\x2', '\x3', 
+		'\x2', '\a', '\x2', ',', '\n', '\x2', '\f', '\x2', '\xE', '\x2', '/', 
+		'\v', '\x2', '\x3', '\x2', '\x3', '\x2', '\x3', '\x3', '\x3', '\x3', '\x3', 
+		'\x3', '\x5', '\x3', '\x36', '\n', '\x3', '\x3', '\x4', '\x3', '\x4', 
+		'\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\x3', '\x4', '\a', '\x4', '>', 
+		'\n', '\x4', '\f', '\x4', '\xE', '\x4', '\x41', '\v', '\x4', '\x3', '\x5', 
+		'\x3', '\x5', '\x3', '\x6', '\x3', '\x6', '\x3', '\x6', '\x3', '\x6', 
+		'\x3', '\x6', '\x3', '\x6', '\a', '\x6', 'K', '\n', '\x6', '\f', '\x6', 
+		'\xE', '\x6', 'N', '\v', '\x6', '\x3', '\a', '\x3', '\a', '\x3', '\a', 
+		'\x3', '\a', '\x5', '\a', 'T', '\n', '\a', '\x3', '\a', '\x3', '\a', '\x5', 
+		'\a', 'X', '\n', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', '\x3', '\a', 
+		'\x3', '\b', '\x3', '\b', '\x3', '\b', '\a', '\b', '\x61', '\n', '\b', 
+		'\f', '\b', '\xE', '\b', '\x64', '\v', '\b', '\x3', '\t', '\x3', '\t', 
+		'\x3', '\t', '\x3', '\n', '\x3', '\n', '\x3', '\n', '\x5', '\n', 'l', 
+		'\n', '\n', '\x3', '\v', '\x3', '\v', '\x3', '\v', '\x3', '\v', '\x3', 
+		'\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', '\x3', '\f', '\x3', '\r', 
+		'\x3', '\r', '\x3', '\r', '\a', '\r', 'z', '\n', '\r', '\f', '\r', '\xE', 
+		'\r', '}', '\v', '\r', '\x3', '\xE', '\x3', '\xE', '\x3', '\xE', '\x3', 
+		'\xE', '\x5', '\xE', '\x83', '\n', '\xE', '\x3', '\xF', '\x3', '\xF', 
+		'\x5', '\xF', '\x87', '\n', '\xF', '\a', '\xF', '\x89', '\n', '\xF', '\f', 
+		'\xF', '\xE', '\xF', '\x8C', '\v', '\xF', '\x3', '\x10', '\x3', '\x10', 
+		'\x5', '\x10', '\x90', '\n', '\x10', '\x3', '\x11', '\x3', '\x11', '\x3', 
+		'\x12', '\x3', '\x12', '\x3', '\x13', '\x3', '\x13', '\x3', '\x13', '\x3', 
+		'\x13', '\x3', '\x13', '\x2', '\x4', '\x6', '\n', '\x14', '\x2', '\x4', 
+		'\x6', '\b', '\n', '\f', '\xE', '\x10', '\x12', '\x14', '\x16', '\x18', 
+		'\x1A', '\x1C', '\x1E', ' ', '\"', '$', '\x2', '\x2', '\x2', '\x97', '\x2', 
+		'\'', '\x3', '\x2', '\x2', '\x2', '\x4', '\x32', '\x3', '\x2', '\x2', 
+		'\x2', '\x6', '\x37', '\x3', '\x2', '\x2', '\x2', '\b', '\x42', '\x3', 
+		'\x2', '\x2', '\x2', '\n', '\x44', '\x3', '\x2', '\x2', '\x2', '\f', 'O', 
+		'\x3', '\x2', '\x2', '\x2', '\xE', ']', '\x3', '\x2', '\x2', '\x2', '\x10', 
+		'\x65', '\x3', '\x2', '\x2', '\x2', '\x12', 'k', '\x3', '\x2', '\x2', 
+		'\x2', '\x14', 'm', '\x3', '\x2', '\x2', '\x2', '\x16', 'q', '\x3', '\x2', 
+		'\x2', '\x2', '\x18', 'v', '\x3', '\x2', '\x2', '\x2', '\x1A', '~', '\x3', 
+		'\x2', '\x2', '\x2', '\x1C', '\x8A', '\x3', '\x2', '\x2', '\x2', '\x1E', 
+		'\x8F', '\x3', '\x2', '\x2', '\x2', ' ', '\x91', '\x3', '\x2', '\x2', 
+		'\x2', '\"', '\x93', '\x3', '\x2', '\x2', '\x2', '$', '\x95', '\x3', '\x2', 
+		'\x2', '\x2', '&', '(', '\x5', '\x4', '\x3', '\x2', '\'', '&', '\x3', 
+		'\x2', '\x2', '\x2', '\'', '(', '\x3', '\x2', '\x2', '\x2', '(', '-', 
+		'\x3', '\x2', '\x2', '\x2', ')', ',', '\x5', '\f', '\a', '\x2', '*', ',', 
+		'\x5', '\x1A', '\xE', '\x2', '+', ')', '\x3', '\x2', '\x2', '\x2', '+', 
+		'*', '\x3', '\x2', '\x2', '\x2', ',', '/', '\x3', '\x2', '\x2', '\x2', 
+		'-', '+', '\x3', '\x2', '\x2', '\x2', '-', '.', '\x3', '\x2', '\x2', '\x2', 
+		'.', '\x30', '\x3', '\x2', '\x2', '\x2', '/', '-', '\x3', '\x2', '\x2', 
+		'\x2', '\x30', '\x31', '\a', '\x2', '\x2', '\x3', '\x31', '\x3', '\x3', 
+		'\x2', '\x2', '\x2', '\x32', '\x33', '\a', '\x6', '\x2', '\x2', '\x33', 
+		'\x35', '\x5', '\x6', '\x4', '\x2', '\x34', '\x36', '\a', '\x12', '\x2', 
+		'\x2', '\x35', '\x34', '\x3', '\x2', '\x2', '\x2', '\x35', '\x36', '\x3', 
+		'\x2', '\x2', '\x2', '\x36', '\x5', '\x3', '\x2', '\x2', '\x2', '\x37', 
+		'\x38', '\b', '\x4', '\x1', '\x2', '\x38', '\x39', '\a', '\x14', '\x2', 
+		'\x2', '\x39', '?', '\x3', '\x2', '\x2', '\x2', ':', ';', '\f', '\x3', 
+		'\x2', '\x2', ';', '<', '\a', '\x13', '\x2', '\x2', '<', '>', '\a', '\x14', 
+		'\x2', '\x2', '=', ':', '\x3', '\x2', '\x2', '\x2', '>', '\x41', '\x3', 
+		'\x2', '\x2', '\x2', '?', '=', '\x3', '\x2', '\x2', '\x2', '?', '@', '\x3', 
+		'\x2', '\x2', '\x2', '@', '\a', '\x3', '\x2', '\x2', '\x2', '\x41', '?', 
+		'\x3', '\x2', '\x2', '\x2', '\x42', '\x43', '\a', '\x14', '\x2', '\x2', 
+		'\x43', '\t', '\x3', '\x2', '\x2', '\x2', '\x44', '\x45', '\b', '\x6', 
+		'\x1', '\x2', '\x45', '\x46', '\a', '\x14', '\x2', '\x2', '\x46', 'L', 
+		'\x3', '\x2', '\x2', '\x2', 'G', 'H', '\f', '\x3', '\x2', '\x2', 'H', 
+		'I', '\a', '\x13', '\x2', '\x2', 'I', 'K', '\a', '\x14', '\x2', '\x2', 
+		'J', 'G', '\x3', '\x2', '\x2', '\x2', 'K', 'N', '\x3', '\x2', '\x2', '\x2', 
+		'L', 'J', '\x3', '\x2', '\x2', '\x2', 'L', 'M', '\x3', '\x2', '\x2', '\x2', 
+		'M', '\v', '\x3', '\x2', '\x2', '\x2', 'N', 'L', '\x3', '\x2', '\x2', 
+		'\x2', 'O', 'P', '\a', '\a', '\x2', '\x2', 'P', 'Q', '\x5', '\b', '\x5', 
+		'\x2', 'Q', 'S', '\a', '\t', '\x2', '\x2', 'R', 'T', '\x5', '\xE', '\b', 
+		'\x2', 'S', 'R', '\x3', '\x2', '\x2', '\x2', 'S', 'T', '\x3', '\x2', '\x2', 
+		'\x2', 'T', 'U', '\x3', '\x2', '\x2', '\x2', 'U', 'W', '\a', '\n', '\x2', 
+		'\x2', 'V', 'X', '\x5', '\x12', '\n', '\x2', 'W', 'V', '\x3', '\x2', '\x2', 
+		'\x2', 'W', 'X', '\x3', '\x2', '\x2', '\x2', 'X', 'Y', '\x3', '\x2', '\x2', 
+		'\x2', 'Y', 'Z', '\a', '\v', '\x2', '\x2', 'Z', '[', '\x5', '\x1C', '\xF', 
+		'\x2', '[', '\\', '\a', '\f', '\x2', '\x2', '\\', '\r', '\x3', '\x2', 
+		'\x2', '\x2', ']', '\x62', '\x5', '\x10', '\t', '\x2', '^', '_', '\a', 
+		'\x11', '\x2', '\x2', '_', '\x61', '\x5', '\x10', '\t', '\x2', '`', '^', 
+		'\x3', '\x2', '\x2', '\x2', '\x61', '\x64', '\x3', '\x2', '\x2', '\x2', 
+		'\x62', '`', '\x3', '\x2', '\x2', '\x2', '\x62', '\x63', '\x3', '\x2', 
+		'\x2', '\x2', '\x63', '\xF', '\x3', '\x2', '\x2', '\x2', '\x64', '\x62', 
+		'\x3', '\x2', '\x2', '\x2', '\x65', '\x66', '\a', '\x14', '\x2', '\x2', 
+		'\x66', 'g', '\x5', '\x12', '\n', '\x2', 'g', '\x11', '\x3', '\x2', '\x2', 
+		'\x2', 'h', 'l', '\x5', '\x14', '\v', '\x2', 'i', 'l', '\x5', '\x16', 
+		'\f', '\x2', 'j', 'l', '\x5', '\n', '\x6', '\x2', 'k', 'h', '\x3', '\x2', 
+		'\x2', '\x2', 'k', 'i', '\x3', '\x2', '\x2', '\x2', 'k', 'j', '\x3', '\x2', 
+		'\x2', '\x2', 'l', '\x13', '\x3', '\x2', '\x2', '\x2', 'm', 'n', '\a', 
+		'\r', '\x2', '\x2', 'n', 'o', '\x5', '\n', '\x6', '\x2', 'o', 'p', '\a', 
+		'\xE', '\x2', '\x2', 'p', '\x15', '\x3', '\x2', '\x2', '\x2', 'q', 'r', 
+		'\x5', '\n', '\x6', '\x2', 'r', 's', '\a', '\xF', '\x2', '\x2', 's', 't', 
+		'\x5', '\x18', '\r', '\x2', 't', 'u', '\a', '\x10', '\x2', '\x2', 'u', 
+		'\x17', '\x3', '\x2', '\x2', '\x2', 'v', '{', '\x5', '\x12', '\n', '\x2', 
+		'w', 'x', '\a', '\x11', '\x2', '\x2', 'x', 'z', '\x5', '\x12', '\n', '\x2', 
+		'y', 'w', '\x3', '\x2', '\x2', '\x2', 'z', '}', '\x3', '\x2', '\x2', '\x2', 
+		'{', 'y', '\x3', '\x2', '\x2', '\x2', '{', '|', '\x3', '\x2', '\x2', '\x2', 
+		'|', '\x19', '\x3', '\x2', '\x2', '\x2', '}', '{', '\x3', '\x2', '\x2', 
+		'\x2', '~', '\x7F', '\a', '\b', '\x2', '\x2', '\x7F', '\x82', '\x5', '\b', 
+		'\x5', '\x2', '\x80', '\x81', '\a', '\v', '\x2', '\x2', '\x81', '\x83', 
+		'\a', '\f', '\x2', '\x2', '\x82', '\x80', '\x3', '\x2', '\x2', '\x2', 
+		'\x82', '\x83', '\x3', '\x2', '\x2', '\x2', '\x83', '\x1B', '\x3', '\x2', 
+		'\x2', '\x2', '\x84', '\x86', '\x5', '\x1E', '\x10', '\x2', '\x85', '\x87', 
+		'\a', '\x12', '\x2', '\x2', '\x86', '\x85', '\x3', '\x2', '\x2', '\x2', 
+		'\x86', '\x87', '\x3', '\x2', '\x2', '\x2', '\x87', '\x89', '\x3', '\x2', 
+		'\x2', '\x2', '\x88', '\x84', '\x3', '\x2', '\x2', '\x2', '\x89', '\x8C', 
+		'\x3', '\x2', '\x2', '\x2', '\x8A', '\x88', '\x3', '\x2', '\x2', '\x2', 
+		'\x8A', '\x8B', '\x3', '\x2', '\x2', '\x2', '\x8B', '\x1D', '\x3', '\x2', 
+		'\x2', '\x2', '\x8C', '\x8A', '\x3', '\x2', '\x2', '\x2', '\x8D', '\x90', 
+		'\x5', ' ', '\x11', '\x2', '\x8E', '\x90', '\x5', '\"', '\x12', '\x2', 
+		'\x8F', '\x8D', '\x3', '\x2', '\x2', '\x2', '\x8F', '\x8E', '\x3', '\x2', 
+		'\x2', '\x2', '\x90', '\x1F', '\x3', '\x2', '\x2', '\x2', '\x91', '\x92', 
+		'\a', '\x14', '\x2', '\x2', '\x92', '!', '\x3', '\x2', '\x2', '\x2', '\x93', 
+		'\x94', '\a', '\x15', '\x2', '\x2', '\x94', '#', '\x3', '\x2', '\x2', 
+		'\x2', '\x95', '\x96', '\x5', '\x1E', '\x10', '\x2', '\x96', '\x97', '\a', 
+		'\x1A', '\x2', '\x2', '\x97', '\x98', '\x5', '\x1E', '\x10', '\x2', '\x98', 
+		'%', '\x3', '\x2', '\x2', '\x2', '\x11', '\'', '+', '-', '\x35', '?', 
+		'L', 'S', 'W', '\x62', 'k', '{', '\x82', '\x86', '\x8A', '\x8F',
 	};
 
 	public static readonly ATN _ATN =
@@ -405,3 +1373,4 @@ public partial class MarsParser : Parser {
 
 
 }
+} // namespace MarsLang.Compiler

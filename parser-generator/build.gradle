@@ -18,6 +18,6 @@ dependencies {
 }
 
 generateGrammarSource {
-    arguments += ["-visitor", "-long-messages", "-Dlanguage=CSharp"]
+    arguments += ["-visitor", "-long-messages", "-Dlanguage=CSharp", "-package", "MarsLang.Compiler"]
     outputDirectory = file("../compiler/Marsc/generated")
 }

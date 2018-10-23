@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marsc
+namespace MarsLang.Compiler
 {
     class Program
     {
